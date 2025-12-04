@@ -7,6 +7,15 @@ export function middleware(request: NextRequest) {
   // Get authentication status from cookie
   const isAuthenticated = request.cookies.get("isAuthenticated")?.value === "true";
   
+  // Allow access to login page even if authenticated (will redirect in component)
+  // Allow access to static assets and API routes
+  if (pathname.startsWith("/login") || 
+      pathname.startsWith("/api") || 
+      pathname.startsWith("/_next") ||
+      pathname.includes(".")) {
+    return NextResponse.next();
+  }
+  
   // Protected routes that require authentication
   const protectedRoutes = ["/dashboard", "/dashboard/config"];
   
@@ -16,10 +25,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
   
-  // If already authenticated and trying to access login page, redirect to dashboard
-  if (pathname === "/login" && isAuthenticated) {
-    const dashboardUrl = new URL("/dashboard", request.url);
-    return NextResponse.redirect(dashboardUrl);
+  // If accessing root path and not authenticated, redirect to login
+  if (pathname === "/" && !isAuthenticated) {
+    const loginUrl = new URL("/login", request.url);
+    return NextResponse.redirect(loginUrl);
   }
   
   return NextResponse.next();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,15 +10,46 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, Lock, Mail, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth-context";
+import { Language, t } from "@/lib/translations";
+import { LanguageSelector } from "@/components/language-selector";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const [language, setLanguage] = useState<Language>("id");
+  const { login, isAuthenticated } = useAuth();
   const router = useRouter();
+
+  // Check if user is already authenticated and redirect
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+    
+    // Load language preference
+    const savedLang = localStorage.getItem("language") as Language;
+    if (savedLang) {
+      setLanguage(savedLang);
+    }
+    
+    // Check if user was remembered before
+    const savedUsername = localStorage.getItem("remembered_username");
+    const wasRemembered = localStorage.getItem("remember_me") === "true";
+    
+    if (savedUsername && wasRemembered) {
+      setUsername(savedUsername);
+      setRememberMe(true);
+    }
+  }, [isAuthenticated, router]);
+
+  const handleLanguageChange = (lang: Language) => {
+    setLanguage(lang);
+    localStorage.setItem("language", lang);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,16 +57,16 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const success = login(username, password);
+      const success = login(username, password, rememberMe);
       
       if (success) {
-        toast.success("Login successful! Redirecting...");
+        toast.success(t("Login berhasil!", language));
         setTimeout(() => {
           router.push("/dashboard");
         }, 1000);
       } else {
-        setError("Invalid username or password");
-        toast.error("Invalid username or password");
+        setError(t("Username atau password salah", language));
+        toast.error(t("Username atau password salah", language));
       }
     } catch (error) {
       setError("An error occurred during login");
@@ -53,11 +84,17 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-500 rounded-full mb-4">
             <Shield className="w-8 h-8 text-white" />
           </div>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <LanguageSelector 
+              currentLanguage={language}
+              onLanguageChange={handleLanguageChange}
+            />
+          </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-            Welcome Back
+            {t("Email Routing Manager Login", language)}
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
-            Sign in to access Email Routing Manager
+            {t("Silakan masuk untuk melanjutkan", language)}
           </p>
         </div>
 
@@ -65,10 +102,10 @@ export default function LoginPage() {
         <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-lg">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-xl text-slate-900 dark:text-white">
-              Login Required
+              {t("Login Required", language)}
             </CardTitle>
             <CardDescription className="text-slate-600 dark:text-slate-400">
-              Enter your credentials to continue
+              {t("Silakan masuk untuk melanjutkan", language)}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
@@ -77,14 +114,14 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                   <Mail className="w-4 h-4 inline mr-2" />
-                  Username
+                  {t("Username", language)}
                 </Label>
                 <Input
                   id="username"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your username"
+                  placeholder={t("Masukkan username", language)}
                   className="w-full"
                   required
                   disabled={isLoading}
@@ -95,7 +132,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                   <Lock className="w-4 h-4 inline mr-2" />
-                  Password
+                  {t("Password", language)}
                 </Label>
                 <div className="relative">
                   <Input
@@ -103,7 +140,7 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
+                    placeholder={t("Masukkan password", language)}
                     className="w-full pr-10"
                     required
                     disabled={isLoading}
@@ -125,6 +162,21 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {/* Remember Me Checkbox */}
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  disabled={isLoading}
+                  className="h-4 w-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <Label htmlFor="rememberMe" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  {t("Remember me", language)}
+                </Label>
+              </div>
+
               {/* Error Alert */}
               {error && (
                 <Alert variant="destructive" className="border-red-300 bg-red-50 dark:bg-red-900/20">
@@ -143,10 +195,10 @@ export default function LoginPage() {
                 {isLoading ? (
                   <div className="flex items-center space-x-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    <span>Signing in...</span>
+                    <span>{t("Loading...", language)}</span>
                   </div>
                 ) : (
-                  "Sign In"
+                  t("Masuk", language)
                 )}
               </Button>
             </form>
