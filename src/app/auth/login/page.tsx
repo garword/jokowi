@@ -31,13 +31,15 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  // Check if user is already logged in
+  // Check if user is already logged in or has auto-login flag
   useEffect(() => {
     const savedAuth = localStorage.getItem("auth_token");
     const savedRemember = localStorage.getItem("remember_me");
+    const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const autoLogin = urlParams.get('auto') === 'true';
     
-    if (savedAuth && savedRemember === "true") {
-      // User is remembered, redirect to main app
+    if ((savedAuth && savedRemember === "true") || autoLogin) {
+      // User is remembered or auto-login, redirect to main app
       router.push("/");
     }
     

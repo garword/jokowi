@@ -104,6 +104,30 @@ export default function EmailRoutingManager() {
       document.documentElement.classList.add('dark');
     }
 
+    // Check if user needs auto-login (no auth but has remember me flag)
+    const savedAuth = localStorage.getItem("auth_token");
+    const savedRemember = localStorage.getItem("remember_me");
+    if (!savedAuth && savedRemember === "true") {
+      // Try auto-login by checking if there's a valid session
+      fetch('/api/auth/check-session')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.valid) {
+            // Valid session found, set user info and continue
+            if (data.user) {
+              setUserInfo(data.user);
+            }
+          } else {
+            // No valid session, clear remember me flag
+            localStorage.removeItem("remember_me");
+          }
+        })
+        .catch(error => {
+          console.error("Auto-login check failed:", error);
+          localStorage.removeItem("remember_me");
+        });
+    }
+
     // Setup interval untuk check config setiap 5 detik
     const configCheckInterval = setInterval(checkConfig, 5000);
     return () => clearInterval(configCheckInterval);

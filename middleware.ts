@@ -22,9 +22,26 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;
 
   if (!token) {
-    // No token, redirect to login
-    const loginUrl = new URL("/auth/login", request.url);
-    return NextResponse.redirect(loginUrl);
+    // No token, check if user was previously remembered
+    const rememberMe = request.cookies.get("remember_me")?.value;
+    if (rememberMe === "true") {
+      // User was remembered before, try to auto-login
+      try {
+        // Check if there's a valid user session by checking localStorage data
+        // This is a workaround since we can't access localStorage in middleware
+        // We'll redirect to login page with a special flag
+        const loginUrl = new URL("/auth/login?auto=true", request.url);
+        return NextResponse.redirect(loginUrl);
+      } catch (error) {
+        console.error("Auto-login error:", error);
+        const loginUrl = new URL("/auth/login", request.url);
+        return NextResponse.redirect(loginUrl);
+      }
+    } else {
+      // No remember me flag, redirect to login
+      const loginUrl = new URL("/auth/login", request.url);
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
   try {
