@@ -1,43 +1,64 @@
-# Email Routing Manager
+# 🚀 Email Routing Manager - Final Version
 
-Aplikasi web modern untuk mengelola Email Routing Cloudflare dengan antarmuka yang user-friendly dan responsif. Dibangun dengan Next.js 15, TypeScript, dan Tailwind CSS.
+Aplikasi web modern untuk mengelola Email Routing Cloudflare dengan sistem autentikasi lengkap dan antarmuka yang user-friendly. Dibangun dengan Next.js 15, TypeScript, dan Tailwind CSS.
 
-## 🚀 Fitur Utama
+## ✨ Fitur Utama
 
-### ✅ Email Management
+### 🔐 **Sistem Autentikasi**
+- **Login System**: Form login yang aman dengan username dan password
+- **Protected Routes**: Middleware untuk melindungi halaman dashboard
+- **Session Management**: Manajemen sesi dengan localStorage dan cookies
+- **Auto Redirect**: Pengalihan otomatis berdasarkan status autentikasi
+- **Credentials**: Username: `windaa`, Password: `cantik`
+
+### 📧 **Email Management**
 - **Buat Email Routing Baru**: Generate alamat email custom yang diteruskan ke email tujuan
 - **Mode Otomatis**: Generator nama Indonesia acak (contoh: `budisantoso8x9@domain.com`)
 - **Mode Manual**: Input alias email sesuai keinginan
 - **Hapus Email**: Hapus routing rule dari Cloudflare dan database
 - **Daftar Email**: Tampilkan semua email routing yang telah dibuat
 
-### 🎨 User Interface
+### 🎨 **User Interface**
 - **Modern Design**: Antarmuka yang bersih dan intuitif dengan shadcn/ui
 - **Dark Mode**: Dukungan mode gelap untuk kenyamanan mata
 - **Responsive**: Optimal di desktop dan mobile
 - **Loading States**: Indikator loading saat proses API
 - **Toast Notifications**: Notifikasi sukses/error yang elegan
+- **Multi-language**: Dukungan Bahasa Indonesia dan Inggris
 
-### 🔐 Keamanan
+### 🔐 **Keamanan**
 - **API Token Management**: Token API Cloudflare yang aman
 - **Environment Variables**: Tidak ada hardcoded credentials
 - **Input Validation**: Validasi input otomatis
 - **Error Handling**: Penanganan error yang komprehensif
 
-### 📊 Dashboard
+### 📊 **Dashboard**
 - **Statistics**: Total email, domain aktif, email aktif
 - **Quick Actions**: Tombol refresh dan generate nama cepat
 - **Real-time Updates**: Update otomatis setelah create/delete
+- **Logout Function**: Tombol logout untuk keluar dari sistem
 
 ## 🛠️ Teknologi
 
+### **Core Framework**
 - **Frontend**: Next.js 15 dengan App Router
-- **Styling**: Tailwind CSS + shadcn/ui
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 4 + shadcn/ui components
 - **Database**: Prisma ORM dengan SQLite
 - **API**: Cloudflare API v4 integration
-- **Language**: TypeScript 5
-- **State Management**: React Hooks
-- **Notifications**: Sonner
+
+### **UI Components**
+- **Component Library**: shadcn/ui (New York style)
+- **Icons**: Lucide React
+- **Animations**: Framer Motion
+- **Notifications**: Sonner toast notifications
+- **State Management**: React Hooks + Zustand
+
+### **Development Tools**
+- **Package Manager**: npm
+- **Linting**: ESLint dengan Next.js config
+- **Database**: Prisma dengan SQLite client
+- **Authentication**: Custom auth system dengan middleware
 
 ## 📋 Prerequisites
 
@@ -52,30 +73,41 @@ Sebelum menggunakan aplikasi ini, pastikan:
 
 ## 🚀 Installation & Setup
 
-### 1. Clone dan Install Dependencies
+### 1. Clone Repository
 ```bash
-git clone https://github.com/garword/emailkuy.git
-cd emailkuy
+git clone https://github.com/garword/EMAIL-ROUTING-FINAL.git
+cd EMAIL-ROUTING-FINAL
+```
+
+### 2. Install Dependencies
+```bash
 npm install
 ```
 
-### 2. Environment Variables
+### 3. Environment Variables
 Buat file `.env` di root project:
 ```env
 DATABASE_URL="file:./db/custom.db"
 ```
 
-### 3. Database Setup
+### 4. Database Setup
 ```bash
 npm run db:push
 ```
 
-### 4. Jalankan Development Server
+### 5. Jalankan Development Server
 ```bash
 npm run dev
 ```
 
 Aplikasi akan berjalan di `http://localhost:3000`
+
+## 🔑 **Login Credentials**
+
+Untuk mengakses aplikasi, gunakan credentials berikut:
+
+- **Username**: `windaa`
+- **Password**: `cantik`
 
 ## 📁 Struktur Project
 
@@ -84,32 +116,56 @@ src/
 ├── app/
 │   ├── api/
 │   │   ├── cloudflare/
+│   │   │   ├── config/
+│   │   │   │   └── route.ts          # API untuk konfigurasi Cloudflare
 │   │   │   └── zones/
 │   │   │       └── route.ts          # API untuk fetch zones
 │   │   └── email-routing/
 │   │       ├── route.ts              # GET/POST email routing
 │   │       └── [id]/
 │   │           └── route.ts          # DELETE email routing
-│   ├── layout.tsx                    # Root layout dengan toaster
-│   ├── page.tsx                      # Main application page
-│   └── globals.css                   # Global styles
+│   ├── dashboard/
+│   │   ├── config/
+│   │   │   └── page.tsx            # Halaman konfigurasi
+│   │   └── page.tsx               # Dashboard utama (protected)
+│   ├── login/
+│   │   └── page.tsx               # Halaman login
+│   ├── layout.tsx                  # Root layout dengan AuthProvider
+│   ├── page.tsx                   # Halaman utama dengan redirect
+│   └── globals.css               # Global styles
 ├── components/
-│   └── ui/                           # shadcn/ui components
+│   ├── ui/                       # shadcn/ui components
+│   └── language-selector.tsx      # Komponen pemilih bahasa
+├── contexts/
+│   └── auth-context.tsx          # Authentication context
 ├── lib/
-│   ├── db.ts                         # Prisma database client
-│   └── utils.ts                      # Utility functions
+│   ├── db.ts                     # Prisma database client
+│   ├── utils.ts                  # Utility functions
+│   ├── translations.ts           # Multi-language support
+│   └── cloudflare-api.ts        # Cloudflare API integration
 ├── hooks/
-│   └── use-toast.ts                  # Toast hook
+│   ├── use-toast.ts             # Toast hook
+│   └── use-mobile.ts            # Mobile detection hook
 └── prisma/
-    └── schema.prisma                 # Database schema
+    └── schema.prisma            # Database schema
 ```
 
 ## 🔗 API Endpoints
+
+### Authentication
+- **GET** `/` - Redirect ke login atau dashboard
+- **GET** `/login` - Halaman login
+- **GET** `/dashboard` - Dashboard (protected)
 
 ### Cloudflare Zones
 - **GET** `/api/cloudflare/zones`
   - Fetch semua active zones dari akun Cloudflare
   - Response: `{ success: boolean, zones: Zone[] }`
+
+### Cloudflare Config
+- **GET** `/api/cloudflare/config`
+  - Fetch konfigurasi API Cloudflare
+  - Response: `{ success: boolean, config: CloudflareConfig }`
 
 ### Email Routing
 - **GET** `/api/email-routing`
@@ -129,6 +185,20 @@ src/
 ## 📊 Database Schema
 
 ```sql
+-- Cloudflare Configuration Table
+CREATE TABLE cloudflare_config (
+  id          TEXT PRIMARY KEY,
+  apiToken    TEXT NOT NULL,
+  accountId   TEXT NOT NULL,
+  d1DatabaseId TEXT,
+  workerApiToken TEXT,
+  kvStorageId TEXT,
+  destinationEmails TEXT,
+  createdAt   DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updatedAt   DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Email Routing Table
 CREATE TABLE email_routing (
   id          TEXT PRIMARY KEY,
   zoneId      TEXT NOT NULL,
@@ -145,8 +215,14 @@ CREATE TABLE email_routing (
 
 ## 🎨 UI Components
 
-### Main Features
-1. **Header**: Logo, title, dan dark mode toggle
+### Authentication Flow
+1. **Login Page**: Form login dengan username/password
+2. **Session Management**: localStorage + cookies untuk persistence
+3. **Protected Routes**: Middleware untuk proteksi dashboard
+4. **Auto Redirect**: Pengalihan berdasarkan auth status
+
+### Main Dashboard
+1. **Header**: Logo, title, language selector, config, logout, dark mode
 2. **Create Form**: 
    - Domain selector dropdown
    - Auto/Manual mode toggle
@@ -180,14 +256,20 @@ const indonesianLastNames = [
 ### Cloudflare API Token
 Token yang digunakan dalam aplikasi:
 - **Permissions**: Zone:Read, Email Routing Rules:Edit
-- **Account ID**: `6543986839c715461d19a855c7afa9d7`
-- **Token**: `S8Use9zdidyGF7lg2FFbUU-mbfSMn2Qb9dHaX9ok`
+- **Account ID**: Dapat diambil dari dashboard Cloudflare
+- **Token**: Generate di Cloudflare API Tokens page
 
 ### Database Configuration
 - **Type**: SQLite
 - **Location**: `./db/custom.db`
 - **ORM**: Prisma
 - **Migrations**: Otomatis dengan `npm run db:push`
+
+### Authentication Configuration
+- **Username**: `windaa`
+- **Password**: `cantik`
+- **Session Storage**: localStorage + cookies
+- **Middleware Protection**: All `/dashboard/*` routes
 
 ## 🚀 Production Deployment
 
@@ -207,6 +289,61 @@ NODE_ENV="production"
 - Tidak ada hardcoded credentials
 - HTTPS untuk production
 - Input validation di backend dan frontend
+- Authentication middleware untuk proteksi routes
+
+## 🧪 Testing
+
+### Login Testing
+1. Kunjungi `http://localhost:3000`
+2. Akan di-redirect ke `/login`
+3. Masukkan username: `windaa`, password: `cantik`
+4. Seharusnya di-redirect ke `/dashboard`
+
+### Email Routing Testing
+1. Setup Cloudflare API token di dashboard config
+2. Pilih domain dari dropdown
+3. Pilih mode (Auto/Manual)
+4. Masukkan email tujuan
+5. Klik "Buat Email Routing"
+
+### Logout Testing
+1. Klik tombol logout di header
+2. Seharusnya di-redirect ke `/login`
+3. Session harus terhapus
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Login Error 500**: Pastikan AuthProvider tersedia di layout
+2. **API Error 401**: Check API token permissions
+3. **Zone Not Found**: Pastikan zone status "active"
+4. **Email Creation Failed**: Verifikasi MX record dan destination email
+5. **Database Connection**: Check DATABASE_URL environment variable
+6. **Middleware Error**: Pastikan cookie tersedia saat protected route diakses
+
+### Debug Mode
+Enable Prisma query logging:
+```typescript
+new PrismaClient({
+  log: ['query'],
+})
+```
+
+### Authentication Debug
+Check browser console untuk:
+- localStorage item "isAuthenticated"
+- Cookie "isAuthenticated"
+- AuthProvider availability
+
+## 📞 Support
+
+Jika mengalami masalah:
+1. Check dev logs: `tail -f dev.log`
+2. Verify Cloudflare configuration
+3. Check database connection
+4. Validate API token permissions
+5. Test authentication flow
 
 ## 🤝 Contributing
 
@@ -220,31 +357,12 @@ NODE_ENV="production"
 
 Project ini menggunakan MIT License.
 
-## 🆘 Troubleshooting
-
-### Common Issues
-
-1. **API Error 401**: Check API token permissions
-2. **Zone Not Found**: Pastikan zone status "active"
-3. **Email Creation Failed**: Verifikasi MX record dan destination email
-4. **Database Connection**: Check DATABASE_URL environment variable
-
-### Debug Mode
-Enable Prisma query logging:
-```typescript
-new PrismaClient({
-  log: ['query'],
-})
-```
-
-## 📞 Support
-
-Jika mengalami masalah:
-1. Check dev logs: `tail -f dev.log`
-2. Verify Cloudflare configuration
-3. Check database connection
-4. Validate API token permissions
-
 ---
 
-**EmailKuy** - Solusi modern untuk mengelola email Cloudflare dengan mudah dan aman.
+**Email Routing Manager - Final Version** - Solusi modern dan aman untuk mengelola email Cloudflare dengan sistem autentikasi lengkap.
+
+🔗 **GitHub Repository**: https://github.com/garword/EMAIL-ROUTING-FINAL
+
+👤 **Developer**: garword
+
+📅 **Last Updated**: 2025-01-18
