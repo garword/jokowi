@@ -96,7 +96,7 @@ export default function LoginPage() {
         }
 
         toast.success(t("Login berhasil!", language));
-        router.push("/");
+        window.location.href = "https://q0083aacahe1-d.space.z.ai/";
       } else {
         setError(data.error || t("Login gagal", language));
       }
